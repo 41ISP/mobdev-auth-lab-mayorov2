@@ -1,30 +1,38 @@
-import {useUserStore} from '../store/useUserStore'
-import { api, getErrorMessage } from '../api/api'
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import Button from "../components/Button"
 import Input from "../components/Input"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { useUserStore } from "../store/useUserStore"
+import { api } from "../api/api"
 
 const Login = () => {
     const [error, setError] = useState("")
-    const setSession = useUserStore((state) => state.setSession)
     const navigate = useNavigate()
+    const { setSession } = useUserStore()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        setError('')
+        setError("") 
+
         const user = {
-            username: e.target.username.value,
-            password: e.target.password.value,
+            username: e.target.elements.username.value,
+            password: e.target.elements.password.value,
         }
+
         try {
-            const session = await api.loginUser(user)
-            setSession(session)
-            navigate('/')
-        } catch (error) {
-            setError(getErrorMessage(error))
+            const data = await api.loginUser(user)
+            
+            setSession(data) 
+            
+            navigate("/")
+        } catch (err) {
+            console.error(err)
+            const errorMsg = err.response?.data?.error || err.response?.data?.message || "Неверное имя пользователя или пароль"
+            setError(errorMsg)
         }
     }
+
     return (
         <div className="container">
             <div className="auth-container">
@@ -47,7 +55,6 @@ const Login = () => {
                             required
                             autoComplete="username"
                         />
-                        <div className="form-error">Введите имя пользователя</div>
                     </div>
 
                     <div className="form-group">
@@ -60,7 +67,6 @@ const Login = () => {
                             required
                             autoComplete="current-password"
                         />
-                        <div className="form-error">Введите пароль</div>
                     </div>
 
                     <Button type="submit" className="btn-submit">
@@ -71,8 +77,7 @@ const Login = () => {
                 <div className="auth-divider">или</div>
 
                 <div className="auth-link">
-                    Нет аккаунта?
-                    <Link to={"/register"}>Зарегистрироваться</Link>
+                    Нет аккаунта? <Link to={"/register"}>Зарегистрироваться</Link>
                 </div>
             </div>
         </div>

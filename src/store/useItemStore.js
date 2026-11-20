@@ -1,17 +1,14 @@
-import { create } from 'zustand'
-import { api } from '../api/api'
+import { create } from "zustand";
+import { api } from "../api/api";
 
-const useItemStore = create((set) => ({
+export const useItemStore = create((set) => ({
     items: [],
-
-    getItems: async () => {
+    getItems: async() => {
         try {
-            const items = await AudioParam.getItems()
+            const items = await api.getItems()
             set({ items })
-        } catch (error) {
+        } catch(error) {
             console.error(error)
         }
-    },
+    }
 }))
-
-export default useItemStore

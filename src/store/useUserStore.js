@@ -1,13 +1,16 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 export const useUserStore = create()(
-    persist(
-        (set) => ({
-            session: undefined,
-            setSession: (session) => set({ session}),
-            clearSession: () => set({ session:undefined }),
-        }),
-        { name: 'user-storage' },
+    persist((set) => ({
+        session: undefined,
+        clearSession: () => set({ session: undefined }),
+        setSession: (session) => set({ session }),
+    }),
+        {
+            name: "user-store",
+            storage: createJSONStorage(() => 
+            localStorage),
+        },
     ),
 )
